@@ -23,7 +23,11 @@ import {
   restoreSnapshot,
 } from "./features/timer/utils/snapshot";
 
-function App() {
+type AppProps = {
+  guestCharacterImageUrl: string | null;
+};
+
+function App({ guestCharacterImageUrl }: AppProps) {
   const { data: session, status: sessionStatus } = useSession();
   const {
     phase,
@@ -323,7 +327,7 @@ function App() {
                   SOFT RETRO PIXEL
                 </p>
                 <h1 className="tomato-title m-0 font-display text-[clamp(34px,7vw,58px)] text-tomato-title">
-                  토마토 타이머
+                  뽀모도로 타이머
                 </h1>
                 <p className="m-0 text-[13px] leading-5 text-tomato-help">
                   집중 세션과 짧은 회복 리듬을 한 화면에서 관리해 보세요.
@@ -355,6 +359,7 @@ function App() {
               isLoading={isProgressLoading}
               error={progressMutationError ?? progressLoadError}
               userName={session?.user?.name}
+              guestCharacterImageUrl={guestCharacterImageUrl}
             />
 
             <TimerSettingsPanel
@@ -366,8 +371,8 @@ function App() {
             <div className="space-y-1.5">
               {!pipSupported && (
                 <p className="mb-0 text-[13px] leading-5 text-tomato-help">
-                  현재 브라우저에서는 Document PiP를 지원하지 않아 메인
-                  타이머만 사용할 수 있습니다.
+                  현재 브라우저에서는 Document PiP를 지원하지 않아 메인 타이머만
+                  사용할 수 있습니다.
                 </p>
               )}
 

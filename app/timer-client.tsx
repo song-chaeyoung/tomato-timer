@@ -8,14 +8,16 @@ const TomatoApp = dynamic(() => import("@/src/App"), { ssr: false });
 
 type ClientOnlyTimerAppProps = {
   initialSession: Session | null;
+  guestCharacterImageUrl: string | null;
 };
 
 export function ClientOnlyTimerApp({
   initialSession,
+  guestCharacterImageUrl,
 }: ClientOnlyTimerAppProps) {
   return (
     <SessionProvider session={initialSession}>
-      <TomatoApp />
+      <TomatoApp guestCharacterImageUrl={guestCharacterImageUrl} />
     </SessionProvider>
   );
 }
