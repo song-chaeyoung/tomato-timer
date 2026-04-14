@@ -1,5 +1,6 @@
-﻿import Image from "next/image";
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import Image from "next/image";
+import { useSession } from "next-auth/react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
 import {
   getPhaseDurationSeconds,
@@ -8,6 +9,9 @@ import {
 } from "./constants/timer";
 import { buildSnapshot, useTimerStore } from "./store/timerStore";
 import type { TimerPhase, TimerSettings } from "./types/timer";
+import type { CompletionResponse } from "./types/progress";
+import { GrowthCard } from "./features/progress/components/GrowthCard";
+import { useUserProgress } from "./features/progress/hooks/useUserProgress";
 import { TimerControls } from "./features/timer/components/TimerControls";
 import { TimerDial } from "./features/timer/components/TimerDial";
 import { TimerSettingsPanel } from "./features/timer/components/TimerSettingsPanel";
@@ -20,6 +24,7 @@ import {
 } from "./features/timer/utils/snapshot";
 
 function App() {
+  const { data: session, status: sessionStatus } = useSession();
   const {
     phase,
     focusCountInSet,
@@ -54,6 +59,15 @@ function App() {
     settings,
   });
   const hasHydratedRef = useRef(false);
+  const [progressMutationError, setProgressMutationError] = useState<
+    string | null
+  >(null);
+  const {
+    progress,
+    isLoading: isProgressLoading,
+    error: progressLoadError,
+    applyProgressSnapshot,
+  } = useUserProgress({ sessionStatus });
 
   const snapshot = useMemo(
     () =>
@@ -81,17 +95,52 @@ function App() {
   const notifyCompleted = useCallback((completedPhase: TimerPhase) => {
     if ("Notification" in window && Notification.permission === "granted") {
       new Notification("Tomato!", {
-        body: `${PHASE_LABEL[completedPhase]} ?④퀎媛 ?꾨즺?먯뼱??`,
+        body: `${PHASE_LABEL[completedPhase]} 단계가 완료되었어요.`,
       });
     }
 
     playCompletionTone();
   }, []);
 
+  const persistFocusCompletion = useCallback(
+    async (completedAt: number, completedSettings: TimerSettings) => {
+      if (sessionStatus !== "authenticated") {
+        return;
+      }
+
+      try {
+        const response = await fetch("/api/pomodoro/complete", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            completedAt: new Date(completedAt).toISOString(),
+            focusSeconds: getPhaseDurationSeconds("focus", completedSettings),
+            focusMinutes: completedSettings.focusMinutes,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`Failed to persist completion: ${response.status}`);
+        }
+
+        const data: CompletionResponse = await response.json();
+        applyProgressSnapshot(data);
+        setProgressMutationError(null);
+      } catch (persistError) {
+        console.error(persistError);
+        setProgressMutationError("집중 완료 기록을 저장하지 못했습니다.");
+      }
+    },
+    [applyProgressSnapshot, sessionStatus],
+  );
+
   const workerControls = useTimerWorker({
     getCurrentSnapshotBase: () => snapshotBaseRef.current,
     onSnapshot: hydrate,
     onCompleted: (completedPhase, at) => {
+      const completedSnapshotBase = snapshotBaseRef.current;
       const nextSnapshot = advancePhaseAfterCompletion(at);
       snapshotBaseRef.current = {
         phase: nextSnapshot.phase,
@@ -99,6 +148,10 @@ function App() {
         settings: nextSnapshot.settings,
       };
       notifyCompleted(completedPhase);
+
+      if (completedPhase === "focus") {
+        void persistFocusCompletion(at, completedSnapshotBase.settings);
+      }
     },
   });
 
@@ -142,7 +195,7 @@ function App() {
 
   const resetTimer = useCallback(() => {
     const shouldReset = window.confirm(
-      "??대㉧瑜?珥덇린 ?곹깭(吏묒쨷 1?뚯감, 湲곕낯 ?ㅼ젙)濡?由ъ뀑?좉퉴??",
+      "타이머를 초기 상태(집중 1회차, 기본 설정)로 되돌릴까요?",
     );
 
     if (!shouldReset) {
@@ -190,6 +243,7 @@ function App() {
       if (status !== "idle") {
         return;
       }
+
       applySettings(nextSettings);
     },
     [applySettings, status],
@@ -202,6 +256,12 @@ function App() {
       settings,
     };
   }, [focusCountInSet, phase, settings]);
+
+  useEffect(() => {
+    if (sessionStatus !== "authenticated") {
+      setProgressMutationError(null);
+    }
+  }, [sessionStatus]);
 
   useEffect(() => {
     const stored = readStoredSnapshot();
@@ -237,8 +297,8 @@ function App() {
   }, [openPipWindow]);
 
   return (
-    <main className="relative isolate flex min-h-dvh items-center justify-center px-4 py-8 sm:px-6">
-      <section className="tomato-shell-enter relative w-full max-w-[980px] overflow-hidden rounded-[34px] border border-tomato-border/85 bg-tomato-card/88 p-[clamp(18px,3.6vw,34px)] shadow-[0_24px_52px_rgba(112,57,19,0.17),0_3px_12px_rgba(112,57,19,0.08)] backdrop-blur-md">
+    <main className="relative isolate flex min-h-dvh items-center justify-center px-4 py-4 sm:px-6 sm:py-5">
+      <section className="tomato-shell-enter relative w-full max-w-[980px] overflow-hidden rounded-[34px] border border-tomato-border/85 bg-tomato-card/88 p-[clamp(16px,3vw,28px)] shadow-[0_24px_52px_rgba(112,57,19,0.17),0_3px_12px_rgba(112,57,19,0.08)] backdrop-blur-md">
         <div
           className="pointer-events-none absolute -right-16 -top-20 h-52 w-52 rounded-full bg-tomato-accent/18 blur-3xl"
           aria-hidden="true"
@@ -248,12 +308,12 @@ function App() {
           aria-hidden="true"
         />
 
-        <div className="relative grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(310px,360px)] lg:items-end lg:gap-7">
-          <div className="space-y-[18px]">
+        <div className="relative grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(310px,360px)] lg:items-start lg:gap-6">
+          <div className="space-y-4">
             <header className="flex items-start gap-3 text-left">
               <Image
                 src="/LOGO.png"
-                alt="?좊쭏??罹먮┃??濡쒓퀬"
+                alt="토마토 타이머 로고"
                 width={56}
                 height={56}
                 className="tomato-logo h-14 w-14 shrink-0 rounded-[12px] border border-tomato-border-soft/75 bg-white/72 object-cover p-[3px] shadow-[0_5px_14px_rgba(112,57,19,0.1)]"
@@ -263,10 +323,10 @@ function App() {
                   SOFT RETRO PIXEL
                 </p>
                 <h1 className="tomato-title m-0 font-display text-[clamp(34px,7vw,58px)] text-tomato-title">
-                  戮紐⑤룄濡???대㉧
+                  토마토 타이머
                 </h1>
                 <p className="m-0 text-[13px] leading-5 text-tomato-help">
-                  湲?吏묒쨷 ?몄뀡怨?吏㏃? ?낅Т ?ㅽ봽由고듃瑜?媛숈? 由щ벉?쇰줈 ?좎???                  蹂댁꽭??
+                  집중 세션과 짧은 회복 리듬을 한 화면에서 관리해 보세요.
                 </p>
               </div>
             </header>
@@ -289,6 +349,14 @@ function App() {
               onOpenPipWindow={handleOpenPipWindow}
             />
 
+            <GrowthCard
+              sessionStatus={sessionStatus}
+              progress={progress}
+              isLoading={isProgressLoading}
+              error={progressMutationError ?? progressLoadError}
+              userName={session?.user?.name}
+            />
+
             <TimerSettingsPanel
               settings={settings}
               disabled={status !== "idle"}
@@ -298,7 +366,8 @@ function App() {
             <div className="space-y-1.5">
               {!pipSupported && (
                 <p className="mb-0 text-[13px] leading-5 text-tomato-help">
-                  ?꾩옱 釉뚮씪?곗???Document PiP瑜?吏?먰븯吏 ?딆븘 硫붿씤 ??대㉧留?                  ?숈옉?⑸땲??
+                  현재 브라우저에서는 Document PiP를 지원하지 않아 메인
+                  타이머만 사용할 수 있습니다.
                 </p>
               )}
 
@@ -316,4 +385,3 @@ function App() {
 }
 
 export default App;
-
