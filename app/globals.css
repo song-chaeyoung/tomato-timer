@@ -1,26 +1,211 @@
+@import url('https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
+@theme {
+  --font-sans:
+    'Noto Sans KR',
+    'Pretendard',
+    'Apple SD Gothic Neo',
+    'Malgun Gothic',
+    'Segoe UI',
+    sans-serif;
+  --font-display:
+    'Jua',
+    'Noto Sans KR',
+    'Pretendard',
+    'Apple SD Gothic Neo',
+    'Malgun Gothic',
+    sans-serif;
+
+  --color-tomato-page: oklch(97.4% 0.024 74);
+  --color-tomato-ink: oklch(29% 0.04 34);
+  --color-tomato-ink-strong: oklch(23% 0.047 31);
+  --color-tomato-title: oklch(26% 0.056 34);
+  --color-tomato-subtle: oklch(43% 0.048 41);
+  --color-tomato-meta: oklch(45% 0.04 42);
+  --color-tomato-help: oklch(47% 0.038 44);
+  --color-tomato-error: oklch(56% 0.165 30);
+
+  --color-tomato-card: oklch(99.1% 0.015 70);
+  --color-tomato-card-strong: oklch(98.4% 0.019 66);
+  --color-tomato-border: oklch(84% 0.074 57);
+  --color-tomato-border-soft: oklch(90% 0.047 60);
+  --color-tomato-accent: oklch(63% 0.182 40);
+  --color-leaf-accent: oklch(65% 0.126 145);
+
+  --color-surface-quiet: oklch(99% 0.012 67 / 75%);
+  --color-surface-elevated: oklch(99% 0.018 64 / 92%);
+
+  --color-status-idle-border: oklch(89% 0.046 60);
+  --color-status-idle-bg: oklch(99% 0.012 66 / 88%);
+  --color-status-idle-text: oklch(43% 0.051 38);
+  --color-status-running-border: oklch(74% 0.146 38 / 56%);
+  --color-status-running-bg: oklch(97% 0.045 54 / 78%);
+  --color-status-running-text: oklch(29% 0.059 33);
+  --color-status-paused-border: oklch(81% 0.078 56 / 68%);
+  --color-status-paused-bg: oklch(97% 0.036 72 / 82%);
+  --color-status-paused-text: oklch(36% 0.061 42);
+
+  --color-phase-focus-start: oklch(68% 0.188 35);
+  --color-phase-focus-end: oklch(61% 0.197 31);
+  --color-phase-focus-empty: oklch(94% 0.028 56);
+  --color-phase-focus-badge: oklch(76% 0.155 53);
+  --color-phase-focus-frame-border: oklch(86% 0.056 57);
+  --color-phase-focus-frame-bg: oklch(96% 0.028 58);
+  --color-phase-focus-ring-border: oklch(87% 0.041 57);
+  --color-phase-focus-ring-bg: oklch(95% 0.022 57);
+  --color-phase-focus-tick-minor: oklch(67% 0.038 42);
+  --color-phase-focus-tick-major: oklch(52% 0.068 35);
+  --color-phase-focus-core-border: oklch(88% 0.035 56);
+  --color-phase-focus-core-bg: oklch(99% 0.01 65);
+  --color-phase-focus-core-shadow: rgba(104, 59, 30, 0.12);
+
+  --color-phase-short-start: oklch(63% 0.141 148);
+  --color-phase-short-end: oklch(55% 0.128 150);
+  --color-phase-short-empty: oklch(93% 0.024 150);
+  --color-phase-short-badge: oklch(72% 0.108 145);
+  --color-phase-short-frame-border: oklch(86% 0.044 148);
+  --color-phase-short-frame-bg: oklch(96% 0.022 149);
+  --color-phase-short-ring-border: oklch(88% 0.034 148);
+  --color-phase-short-ring-bg: oklch(95% 0.019 150);
+  --color-phase-short-tick-minor: oklch(63% 0.032 150);
+  --color-phase-short-tick-major: oklch(49% 0.058 149);
+  --color-phase-short-core-border: oklch(89% 0.031 148);
+  --color-phase-short-core-bg: oklch(99% 0.01 146);
+  --color-phase-short-core-shadow: rgba(56, 104, 78, 0.12);
+
+  --color-phase-long-start: oklch(66% 0.122 21);
+  --color-phase-long-end: oklch(60% 0.114 25);
+  --color-phase-long-empty: oklch(94% 0.026 38);
+  --color-phase-long-badge: oklch(74% 0.108 39);
+  --color-phase-long-frame-border: oklch(86% 0.052 38);
+  --color-phase-long-frame-bg: oklch(96% 0.024 42);
+  --color-phase-long-ring-border: oklch(88% 0.036 38);
+  --color-phase-long-ring-bg: oklch(95% 0.02 40);
+  --color-phase-long-tick-minor: oklch(66% 0.034 34);
+  --color-phase-long-tick-major: oklch(52% 0.06 31);
+  --color-phase-long-core-border: oklch(89% 0.033 39);
+  --color-phase-long-core-bg: oklch(99% 0.01 46);
+  --color-phase-long-core-shadow: rgba(110, 66, 37, 0.12);
+
+  --color-tomato-primary-start: oklch(71% 0.166 43);
+  --color-tomato-primary-end: oklch(62% 0.186 35);
+  --color-tomato-secondary-start: oklch(98% 0.021 66);
+  --color-tomato-secondary-end: oklch(95% 0.026 58);
+  --color-tomato-tertiary-start: oklch(97% 0.015 66);
+  --color-tomato-tertiary-end: oklch(94% 0.02 58);
+  --color-tomato-ghost: oklch(39% 0.049 36);
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  font-family: var(--font-sans);
+  line-height: 1.45;
+  font-weight: 400;
+  color: var(--color-tomato-ink);
+  background: var(--color-tomato-page);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  box-sizing: border-box;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background:
+    radial-gradient(1100px 620px at 0% 0%, oklch(99% 0.04 92 / 76%), transparent 70%),
+    radial-gradient(900px 520px at 100% 0%, oklch(94% 0.075 64 / 62%), transparent 72%),
+    radial-gradient(700px 560px at 120% 100%, oklch(94% 0.085 38 / 48%), transparent 70%),
+    linear-gradient(164deg, oklch(98% 0.02 76), oklch(96% 0.03 72) 48%, oklch(95% 0.03 62));
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.16;
+  background-image:
+    linear-gradient(to right, transparent 0 11px, oklch(80% 0.03 60 / 16%) 11px 12px),
+    linear-gradient(to bottom, transparent 0 11px, oklch(80% 0.03 60 / 13%) 11px 12px);
+  background-size: 12px 12px;
+}
+
+button {
+  font: inherit;
+}
+
+button:focus-visible,
+input:focus-visible {
+  outline: 2px solid color-mix(in oklch, var(--color-tomato-accent) 82%, white);
+  outline-offset: 2px;
+}
+
+.tomato-shell-enter {
+  animation: surface-in 420ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.status-chip-shift {
+  animation: status-shift 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.tomato-logo {
+  transition: transform 220ms cubic-bezier(0.33, 1, 0.68, 1), filter 220ms ease;
+}
+
+.tomato-logo:hover {
+  transform: translateY(-0.5px);
+  filter: saturate(1.02);
+}
+
+.tomato-title {
+  line-height: 1.04;
+  letter-spacing: -0.012em;
+  font-weight: 400;
+  word-break: keep-all;
+  text-wrap: balance;
+}
+
+@keyframes surface-in {
+  from {
+    transform: translateY(10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes status-shift {
+  from {
+    transform: translateY(4px);
+    opacity: 0.6;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tomato-shell-enter,
+  .status-chip-shift {
+    animation: none;
+  }
+
+  .tomato-logo {
+    transition: none;
+  }
+
+  .tomato-logo:hover {
+    transform: none;
+    filter: none;
+  }
 }
