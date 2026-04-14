@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   buildPhaseDurations,
   PIP_CHANNEL_NAME,
@@ -19,6 +19,10 @@ type DocumentPictureInPictureHandle = {
 };
 
 const getDocumentPictureInPicture = () => {
+  if (typeof window === "undefined") {
+    return undefined;
+  }
+
   const scope = window as Window & {
     documentPictureInPicture?: DocumentPictureInPictureHandle;
   };
@@ -27,6 +31,7 @@ const getDocumentPictureInPicture = () => {
 
 export const usePipBridge = (options: PipBridgeOptions) => {
   const [pipError, setPipError] = useState<string | null>(null);
+  const [pipSupported, setPipSupported] = useState<boolean | null>(null);
   const channelRef = useRef<BroadcastChannel | null>(null);
   const pipWindowRef = useRef<Window | null>(null);
   const optionsRef = useRef(options);
@@ -35,10 +40,15 @@ export const usePipBridge = (options: PipBridgeOptions) => {
     optionsRef.current = options;
   }, [options]);
 
-  const pipSupported = useMemo(
-    () => Boolean(getDocumentPictureInPicture()),
-    [],
-  );
+  useEffect(() => {
+    const frameId = requestAnimationFrame(() => {
+      setPipSupported(Boolean(getDocumentPictureInPicture()));
+    });
+
+    return () => {
+      cancelAnimationFrame(frameId);
+    };
+  }, []);
 
   const pushSnapshotToPip = useCallback((snapshot: TimerSnapshot) => {
     const channel = channelRef.current;

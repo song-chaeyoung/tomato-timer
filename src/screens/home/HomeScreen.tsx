@@ -6,28 +6,28 @@ import {
   getPhaseDurationSeconds,
   PHASE_LABEL,
   TIMER_STORAGE_KEY,
-} from "./constants/timer";
-import { buildSnapshot, useTimerStore } from "./store/timerStore";
-import type { TimerPhase, TimerSettings } from "./types/timer";
-import type { CompletionResponse } from "./types/progress";
-import { GrowthCard } from "./features/progress/components/GrowthCard";
-import { useUserProgress } from "./features/progress/hooks/useUserProgress";
-import { TimerControls } from "./features/timer/components/TimerControls";
-import { TimerDial } from "./features/timer/components/TimerDial";
-import { TimerSettingsPanel } from "./features/timer/components/TimerSettingsPanel";
-import { usePipBridge } from "./features/timer/hooks/usePipBridge";
-import { useTimerWorker } from "./features/timer/hooks/useTimerWorker";
-import { playCompletionTone } from "./features/timer/utils/audio";
+} from "@/src/constants/timer";
+import { GrowthCard } from "@/src/features/progress/components/GrowthCard";
+import { useUserProgress } from "@/src/features/progress/hooks/useUserProgress";
+import { TimerControls } from "@/src/features/timer/components/TimerControls";
+import { TimerDial } from "@/src/features/timer/components/TimerDial";
+import { TimerSettingsPanel } from "@/src/features/timer/components/TimerSettingsPanel";
+import { usePipBridge } from "@/src/features/timer/hooks/usePipBridge";
+import { useTimerWorker } from "@/src/features/timer/hooks/useTimerWorker";
+import { playCompletionTone } from "@/src/features/timer/utils/audio";
 import {
   readStoredSnapshot,
   restoreSnapshot,
-} from "./features/timer/utils/snapshot";
+} from "@/src/features/timer/utils/snapshot";
+import { buildSnapshot, useTimerStore } from "@/src/store/timerStore";
+import type { CompletionResponse } from "@/src/types/progress";
+import type { TimerPhase, TimerSettings } from "@/src/types/timer";
 
-type AppProps = {
+type HomeScreenProps = {
   guestCharacterImageUrl: string | null;
 };
 
-function App({ guestCharacterImageUrl }: AppProps) {
+function HomeScreen({ guestCharacterImageUrl }: HomeScreenProps) {
   const { data: session, status: sessionStatus } = useSession();
   const {
     phase,
@@ -347,7 +347,7 @@ function App({ guestCharacterImageUrl }: AppProps) {
           <div className="space-y-3.5">
             <TimerControls
               status={status}
-              pipSupported={pipSupported}
+              pipSupported={Boolean(pipSupported)}
               onRunPrimaryAction={runPrimaryAction}
               onResetTimer={resetTimer}
               onOpenPipWindow={handleOpenPipWindow}
@@ -369,7 +369,7 @@ function App({ guestCharacterImageUrl }: AppProps) {
             />
 
             <div className="space-y-1.5">
-              {!pipSupported && (
+              {pipSupported === false && (
                 <p className="mb-0 text-[13px] leading-5 text-tomato-help">
                   현재 브라우저에서는 Document PiP를 지원하지 않아 메인 타이머만
                   사용할 수 있습니다.
@@ -389,4 +389,4 @@ function App({ guestCharacterImageUrl }: AppProps) {
   );
 }
 
-export default App;
+export default HomeScreen;

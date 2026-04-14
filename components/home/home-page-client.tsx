@@ -1,23 +1,21 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import { SessionProvider } from "next-auth/react";
 import type { Session } from "next-auth";
+import HomeScreen from "@/src/screens/home/HomeScreen";
 
-const TomatoApp = dynamic(() => import("@/src/App"), { ssr: false });
-
-type ClientOnlyTimerAppProps = {
+type HomePageClientProps = {
   initialSession: Session | null;
   guestCharacterImageUrl: string | null;
 };
 
-export function ClientOnlyTimerApp({
+export function HomePageClient({
   initialSession,
   guestCharacterImageUrl,
-}: ClientOnlyTimerAppProps) {
+}: HomePageClientProps) {
   return (
     <SessionProvider session={initialSession}>
-      <TomatoApp guestCharacterImageUrl={guestCharacterImageUrl} />
+      <HomeScreen guestCharacterImageUrl={guestCharacterImageUrl} />
     </SessionProvider>
   );
 }

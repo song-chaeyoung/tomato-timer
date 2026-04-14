@@ -1,13 +1,13 @@
 import { auth } from "@/auth";
 import { getCharacterImageUrl } from "@/src/lib/progress";
-import { ClientOnlyTimerApp } from "./timer-client";
+import { HomePageClient } from "../components/home/home-page-client";
 
 export default async function Home() {
   const session = await auth();
   const guestCharacterImageUrl = getCharacterImageUrl(1);
 
   return (
-    <ClientOnlyTimerApp
+    <HomePageClient
       initialSession={session}
       guestCharacterImageUrl={guestCharacterImageUrl}
     />
