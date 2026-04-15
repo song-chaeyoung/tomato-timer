@@ -46,7 +46,7 @@ export const getCharacterImageUrl = (
     return null;
   }
 
-  return `${normalizedBaseUrl}/stage-${String(level).padStart(2, "0")}.png`;
+  return `${normalizedBaseUrl}/step${level}.png`;
 };
 
 const toCharacterStage = (
