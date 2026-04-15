@@ -1,27 +1,16 @@
 import Image from "next/image";
 import { useSession } from "next-auth/react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback } from "react";
 import { useShallow } from "zustand/react/shallow";
-import {
-  getPhaseDurationSeconds,
-  PHASE_LABEL,
-  TIMER_STORAGE_KEY,
-} from "@/src/constants/timer";
+import { getPhaseDurationSeconds } from "@/src/constants/timer";
 import { GrowthCard } from "@/src/features/progress/components/GrowthCard";
 import { useUserProgress } from "@/src/features/progress/hooks/useUserProgress";
 import { TimerControls } from "@/src/features/timer/components/TimerControls";
 import { TimerDial } from "@/src/features/timer/components/TimerDial";
 import { TimerSettingsPanel } from "@/src/features/timer/components/TimerSettingsPanel";
-import { usePipBridge } from "@/src/features/timer/hooks/usePipBridge";
-import { useTimerWorker } from "@/src/features/timer/hooks/useTimerWorker";
-import { playCompletionTone } from "@/src/features/timer/utils/audio";
-import {
-  readStoredSnapshot,
-  restoreSnapshot,
-} from "@/src/features/timer/utils/snapshot";
-import { buildSnapshot, useTimerStore } from "@/src/store/timerStore";
-import type { CompletionResponse } from "@/src/types/progress";
-import type { TimerPhase, TimerSettings } from "@/src/types/timer";
+import { useTimerStore } from "@/src/store/timerStore";
+import type { TimerSettings } from "@/src/types/timer";
+import { useHomeTimerController } from "./hooks/useHomeTimerController";
 
 type HomeScreenProps = {
   guestCharacterImageUrl: string | null;
@@ -57,248 +46,45 @@ function HomeScreen({ guestCharacterImageUrl }: HomeScreenProps) {
     })),
   );
 
-  const snapshotBaseRef = useRef({
-    phase,
-    focusCountInSet,
-    settings,
-  });
-  const hasHydratedRef = useRef(false);
-  const [progressMutationError, setProgressMutationError] = useState<
-    string | null
-  >(null);
   const {
     progress,
     isLoading: isProgressLoading,
-    error: progressLoadError,
-    applyProgressSnapshot,
+    error: progressError,
+    recordFocusCompletion,
   } = useUserProgress({ sessionStatus });
 
-  const snapshot = useMemo(
-    () =>
-      buildSnapshot(
-        phase,
-        focusCountInSet,
-        settings,
-        status,
-        remainingSeconds,
-        lastUpdatedAt,
-      ),
-    [focusCountInSet, lastUpdatedAt, phase, remainingSeconds, settings, status],
-  );
-
-  const ensureNotificationPermission = useCallback(() => {
-    if (!("Notification" in window)) {
-      return;
-    }
-
-    if (Notification.permission === "default") {
-      void Notification.requestPermission();
-    }
-  }, []);
-
-  const notifyCompleted = useCallback((completedPhase: TimerPhase) => {
-    if ("Notification" in window && Notification.permission === "granted") {
-      new Notification("Tomato!", {
-        body: `${PHASE_LABEL[completedPhase]} 단계가 완료되었어요.`,
-      });
-    }
-
-    playCompletionTone();
-  }, []);
-
-  const persistFocusCompletion = useCallback(
+  const handleFocusCompleted = useCallback(
     async (completedAt: number, completedSettings: TimerSettings) => {
-      if (sessionStatus !== "authenticated") {
-        return;
-      }
-
-      try {
-        const response = await fetch("/api/pomodoro/complete", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            completedAt: new Date(completedAt).toISOString(),
-            focusSeconds: getPhaseDurationSeconds("focus", completedSettings),
-            focusMinutes: completedSettings.focusMinutes,
-          }),
-        });
-
-        if (!response.ok) {
-          throw new Error(`Failed to persist completion: ${response.status}`);
-        }
-
-        const data: CompletionResponse = await response.json();
-        applyProgressSnapshot(data);
-        setProgressMutationError(null);
-      } catch (persistError) {
-        console.error(persistError);
-        setProgressMutationError("집중 완료 기록을 저장하지 못했습니다.");
-      }
+      await recordFocusCompletion({
+        completedAt,
+        focusSeconds: getPhaseDurationSeconds("focus", completedSettings),
+        focusMinutes: completedSettings.focusMinutes,
+      });
     },
-    [applyProgressSnapshot, sessionStatus],
+    [recordFocusCompletion],
   );
 
-  const workerControls = useTimerWorker({
-    getCurrentSnapshotBase: () => snapshotBaseRef.current,
-    onSnapshot: hydrate,
-    onCompleted: (completedPhase, at) => {
-      const completedSnapshotBase = snapshotBaseRef.current;
-      const nextSnapshot = advancePhaseAfterCompletion(at);
-      snapshotBaseRef.current = {
-        phase: nextSnapshot.phase,
-        focusCountInSet: nextSnapshot.focusCountInSet,
-        settings: nextSnapshot.settings,
-      };
-      notifyCompleted(completedPhase);
-
-      if (completedPhase === "focus") {
-        void persistFocusCompletion(at, completedSnapshotBase.settings);
-      }
-    },
-  });
-
-  const startTimerWithoutPip = useCallback(() => {
-    const baseSeconds =
-      remainingSeconds > 0
-        ? remainingSeconds
-        : getPhaseDurationSeconds(phase, settings);
-
-    setStatus("running");
-    workerControls.start(baseSeconds);
-    ensureNotificationPermission();
-  }, [
-    ensureNotificationPermission,
+  const {
+    pipSupported,
+    pipError,
+    runPrimaryAction,
+    resetTimer,
+    handleOpenPipWindow,
+    handleSettingsChange,
+  } = useHomeTimerController({
     phase,
-    remainingSeconds,
-    setStatus,
+    focusCountInSet,
     settings,
-    workerControls,
-  ]);
-
-  const pauseTimer = useCallback(() => {
-    setStatus("paused");
-    workerControls.pause();
-  }, [setStatus, workerControls]);
-
-  const resumeTimer = useCallback(() => {
-    if (remainingSeconds <= 0) {
-      return;
-    }
-
-    setStatus("running");
-    workerControls.resume();
-    ensureNotificationPermission();
-  }, [
-    ensureNotificationPermission,
+    status,
     remainingSeconds,
+    lastUpdatedAt,
     setStatus,
-    workerControls,
-  ]);
-
-  const resetTimer = useCallback(() => {
-    const shouldReset = window.confirm(
-      "타이머를 초기 상태(집중 1회차, 기본 설정)로 되돌릴까요?",
-    );
-
-    if (!shouldReset) {
-      return;
-    }
-
-    const nextSnapshot = resetAll();
-    snapshotBaseRef.current = {
-      phase: nextSnapshot.phase,
-      focusCountInSet: nextSnapshot.focusCountInSet,
-      settings: nextSnapshot.settings,
-    };
-    workerControls.reset(nextSnapshot.remainingSeconds);
-  }, [resetAll, workerControls]);
-
-  const { pipSupported, pipError, openPipWindow } = usePipBridge({
-    snapshot,
-    onStart: startTimerWithoutPip,
-    onPause: pauseTimer,
-    onResume: resumeTimer,
-    onReset: resetTimer,
+    resetAll,
+    applySettings,
+    hydrate,
+    advancePhaseAfterCompletion,
+    onFocusCompleted: handleFocusCompleted,
   });
-
-  const startTimer = useCallback(() => {
-    startTimerWithoutPip();
-    void openPipWindow();
-  }, [openPipWindow, startTimerWithoutPip]);
-
-  const runPrimaryAction = useCallback(() => {
-    if (status === "running") {
-      pauseTimer();
-      return;
-    }
-
-    if (status === "paused") {
-      resumeTimer();
-      return;
-    }
-
-    startTimer();
-  }, [pauseTimer, resumeTimer, startTimer, status]);
-
-  const handleSettingsChange = useCallback(
-    (nextSettings: Partial<TimerSettings>) => {
-      if (status !== "idle") {
-        return;
-      }
-
-      applySettings(nextSettings);
-    },
-    [applySettings, status],
-  );
-
-  useEffect(() => {
-    snapshotBaseRef.current = {
-      phase,
-      focusCountInSet,
-      settings,
-    };
-  }, [focusCountInSet, phase, settings]);
-
-  useEffect(() => {
-    if (sessionStatus !== "authenticated") {
-      setProgressMutationError(null);
-    }
-  }, [sessionStatus]);
-
-  useEffect(() => {
-    const stored = readStoredSnapshot();
-    if (stored) {
-      const restored = restoreSnapshot(stored);
-      snapshotBaseRef.current = {
-        phase: restored.phase,
-        focusCountInSet: restored.focusCountInSet,
-        settings: restored.settings,
-      };
-      hydrate(restored);
-
-      if (restored.status === "running") {
-        workerControls.sync(restored.status, restored.remainingSeconds);
-      }
-    }
-
-    queueMicrotask(() => {
-      hasHydratedRef.current = true;
-    });
-  }, [hydrate, workerControls]);
-
-  useEffect(() => {
-    if (!hasHydratedRef.current) {
-      return;
-    }
-
-    localStorage.setItem(TIMER_STORAGE_KEY, JSON.stringify(snapshot));
-  }, [snapshot]);
-
-  const handleOpenPipWindow = useCallback(() => {
-    void openPipWindow();
-  }, [openPipWindow]);
 
   return (
     <main className="relative isolate flex min-h-dvh items-center justify-center px-4 py-4 sm:px-6 sm:py-5">
@@ -357,7 +143,7 @@ function HomeScreen({ guestCharacterImageUrl }: HomeScreenProps) {
               sessionStatus={sessionStatus}
               progress={progress}
               isLoading={isProgressLoading}
-              error={progressMutationError ?? progressLoadError}
+              error={progressError}
               userName={session?.user?.name}
               guestCharacterImageUrl={guestCharacterImageUrl}
             />

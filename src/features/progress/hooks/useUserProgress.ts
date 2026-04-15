@@ -11,6 +11,12 @@ type UseUserProgressOptions = {
   sessionStatus: AuthStatus;
 };
 
+type RecordFocusCompletionInput = {
+  completedAt: number;
+  focusSeconds: number;
+  focusMinutes: number;
+};
+
 const normalizeProgressSnapshot = (
   snapshot: ProgressSnapshot | CompletionResponse,
 ): ProgressSnapshot => ({
@@ -69,6 +75,45 @@ export const useUserProgress = ({
     }
   }, [applyProgressSnapshot, sessionStatus]);
 
+  const recordFocusCompletion = useCallback(
+    async ({
+      completedAt,
+      focusSeconds,
+      focusMinutes,
+    }: RecordFocusCompletionInput) => {
+      if (sessionStatus !== "authenticated") {
+        return;
+      }
+
+      try {
+        const response = await fetch("/api/pomodoro/complete", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            completedAt: new Date(completedAt).toISOString(),
+            focusSeconds,
+            focusMinutes,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`Failed to persist completion: ${response.status}`);
+        }
+
+        const data: CompletionResponse = await response.json();
+        applyProgressSnapshot(data);
+      } catch (persistError) {
+        console.error(persistError);
+        startTransition(() => {
+          setError("집중 완료 기록을 저장하지 못했습니다.");
+        });
+      }
+    },
+    [applyProgressSnapshot, sessionStatus],
+  );
+
   useEffect(() => {
     void refresh();
   }, [refresh]);
@@ -78,6 +123,6 @@ export const useUserProgress = ({
     isLoading,
     error,
     refresh,
-    applyProgressSnapshot,
+    recordFocusCompletion,
   };
 };
