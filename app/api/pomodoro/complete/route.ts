@@ -1,4 +1,4 @@
-import { eq, sql } from "drizzle-orm";
+import { desc, eq, sql } from "drizzle-orm";
 import { auth } from "@/auth";
 import { db } from "@/src/db";
 import { pomodoroCompletions, userProgress } from "@/src/db/schema";
@@ -83,63 +83,74 @@ export async function POST(request: Request) {
   const previousTotals = toTotals(previousProgressRow);
   const previousLevel = getCurrentCharacterStage(previousTotals).level;
 
-  let insertedCompletion = false;
+  // 완료 로그를 먼저 저장하고, 동일 완료시각이면 중복 삽입을 무시합니다.
+  await db
+    .insert(pomodoroCompletions)
+    .values({
+      userId,
+      completedAt,
+      focusSeconds: payload.focusSeconds,
+      focusMinutes: payload.focusMinutes,
+    })
+    .onConflictDoNothing({
+      target: [pomodoroCompletions.userId, pomodoroCompletions.completedAt],
+    });
 
-  const nextProgressRow = await db.transaction(async (tx) => {
-    const insertedRows = await tx
-      .insert(pomodoroCompletions)
-      .values({
-        userId,
-        completedAt,
-        focusSeconds: payload.focusSeconds,
-        focusMinutes: payload.focusMinutes,
-      })
-      .onConflictDoNothing()
-      .returning({ id: pomodoroCompletions.id });
+  const [aggregatedTotalsRow] = await db
+    .select({
+      totalFocusCompletions: sql<number>`count(*)::int`,
+      totalFocusMinutes: sql<number>`coalesce(sum(${pomodoroCompletions.focusMinutes}), 0)::int`,
+    })
+    .from(pomodoroCompletions)
+    .where(eq(pomodoroCompletions.userId, userId))
+    .limit(1);
 
-    if (!insertedRows.length) {
-      const [existingProgressRow] = await tx
-        .select({
-          totalFocusCompletions: userProgress.totalFocusCompletions,
-          totalFocusMinutes: userProgress.totalFocusMinutes,
-        })
-        .from(userProgress)
-        .where(eq(userProgress.userId, userId))
-        .limit(1);
+  const [latestCompletionRow] = await db
+    .select({
+      completedAt: pomodoroCompletions.completedAt,
+    })
+    .from(pomodoroCompletions)
+    .where(eq(pomodoroCompletions.userId, userId))
+    .orderBy(desc(pomodoroCompletions.completedAt))
+    .limit(1);
 
-      return existingProgressRow;
-    }
+  const aggregatedTotals = {
+    totalFocusCompletions: aggregatedTotalsRow?.totalFocusCompletions ?? 0,
+    totalFocusMinutes: aggregatedTotalsRow?.totalFocusMinutes ?? 0,
+  };
 
-    insertedCompletion = true;
-
-    const [upsertedProgressRow] = await tx
-      .insert(userProgress)
-      .values({
-        userId,
-        totalFocusCompletions: 1,
-        totalFocusMinutes: payload.focusMinutes,
-        lastCompletedAt: completedAt,
+  await db
+    .insert(userProgress)
+    .values({
+      userId,
+      totalFocusCompletions: aggregatedTotals.totalFocusCompletions,
+      totalFocusMinutes: aggregatedTotals.totalFocusMinutes,
+      lastCompletedAt: latestCompletionRow?.completedAt ?? null,
+      updatedAt: new Date(),
+    })
+    .onConflictDoUpdate({
+      target: userProgress.userId,
+      set: {
+        totalFocusCompletions: aggregatedTotals.totalFocusCompletions,
+        totalFocusMinutes: aggregatedTotals.totalFocusMinutes,
+        lastCompletedAt: latestCompletionRow?.completedAt ?? null,
         updatedAt: new Date(),
-      })
-      .onConflictDoUpdate({
-        target: userProgress.userId,
-        set: {
-          totalFocusCompletions: sql`${userProgress.totalFocusCompletions} + 1`,
-          totalFocusMinutes: sql`${userProgress.totalFocusMinutes} + ${payload.focusMinutes}`,
-          lastCompletedAt: completedAt,
-          updatedAt: new Date(),
-        },
-      })
-      .returning({
-        totalFocusCompletions: userProgress.totalFocusCompletions,
-        totalFocusMinutes: userProgress.totalFocusMinutes,
-      });
+      },
+    });
 
-    return upsertedProgressRow;
-  });
+  const [nextProgressRow] = await db
+    .select({
+      totalFocusCompletions: userProgress.totalFocusCompletions,
+      totalFocusMinutes: userProgress.totalFocusMinutes,
+    })
+    .from(userProgress)
+    .where(eq(userProgress.userId, userId))
+    .limit(1);
 
   const nextTotals = toTotals(nextProgressRow);
   const snapshot = buildProgressSnapshot(nextTotals);
+  const insertedCompletion =
+    nextTotals.totalFocusCompletions > previousTotals.totalFocusCompletions;
 
   return Response.json({
     ...snapshot,
