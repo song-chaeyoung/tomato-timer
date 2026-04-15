@@ -16,6 +16,30 @@ type TimerDialProps = {
   remainingSeconds: number;
 };
 
+const STATUS_CHIP_THEME: Record<
+  TimerStatus,
+  { label: string; border: string; background: string; text: string }
+> = {
+  idle: {
+    label: "대기",
+    border: "var(--color-status-idle-border)",
+    background: "var(--color-status-idle-bg)",
+    text: "var(--color-status-idle-text)",
+  },
+  running: {
+    label: "진행 중",
+    border: "var(--color-status-running-border)",
+    background: "var(--color-status-running-bg)",
+    text: "var(--color-status-running-text)",
+  },
+  paused: {
+    label: "일시정지",
+    border: "var(--color-status-paused-border)",
+    background: "var(--color-status-paused-bg)",
+    text: "var(--color-status-paused-text)",
+  },
+};
+
 export const TimerDial = ({
   phase,
   focusCountInSet,
@@ -48,32 +72,32 @@ export const TimerDial = ({
   };
 
   const statusHint = STATUS_HINT_COPY[status];
+  const statusChip = STATUS_CHIP_THEME[status];
 
   return (
-    <section className="rounded-[26px] border border-tomato-border-soft/95 bg-[var(--color-surface-quiet)] p-[clamp(16px,2.8vw,24px)] shadow-[inset_0_1px_0_rgba(255,255,255,0.8),0_14px_34px_rgba(108,56,21,0.08)]">
+    <section className="w-full rounded-[18px] bg-[var(--color-surface-quiet)] p-[clamp(12px,2vw,18px)]">
       <div className="flex flex-wrap items-center justify-between gap-2.5">
-        {/* <p
+        <p
           key={status}
-          className="status-chip-shift m-0 inline-flex rounded-full border px-3 py-1 text-[12px] font-semibold leading-none tracking-[0.01em]"
+          className="status-chip-shift m-0 inline-flex rounded-full border px-2.5 py-1 text-[12px] font-semibold leading-none tracking-[0.01em]"
           style={{
-            borderColor: statusTone.border,
-            backgroundColor: statusTone.background,
-            color: statusTone.text,
+            borderColor: statusChip.border,
+            backgroundColor: statusChip.background,
+            color: statusChip.text,
           }}
         >
-          {statusContent.label}
-        </p> */}
-        <p className="w-full text-right text-[12px] font-semibold text-tomato-meta">
+          {statusChip.label}
+        </p>
+        <p className="text-[12px] font-semibold text-tomato-meta">
           {PHASE_LABEL[phase]} {focusCountInSet}/{settings.longBreakInterval} ·{" "}
           {totalPhaseMinutes}분
         </p>
       </div>
 
-      <div className="mt-3.5 flex flex-col items-center gap-3">
+      <div className="mt-3 flex flex-col items-center gap-2.5">
         <div
-          className="relative aspect-square w-[clamp(236px,64vw,344px)] max-w-full rounded-[30px] border p-3 shadow-[0_12px_30px_rgba(97,59,31,0.12)]"
+          className="relative aspect-square w-[min(100%,490px)] max-w-full rounded-[24px] p-3"
           style={{
-            borderColor: dialTheme.frameBorder,
             backgroundColor: dialTheme.frameBackground,
           }}
         >
@@ -90,16 +114,15 @@ export const TimerDial = ({
             }}
           >
             <div
-              className="absolute inset-[16px] rounded-full shadow-[inset_0_1px_1px_rgba(255,255,255,0.8)] transition-[background] duration-[260ms] ease-linear"
+              className="absolute inset-[16px] rounded-full shadow-[inset_0_1px_1px_rgba(255,255,255,0.72)] transition-[background] duration-[260ms] ease-linear"
               style={clockRingStyle}
               aria-hidden="true"
             />
             <div
-              className="absolute inset-[64px] rounded-full border"
+              className="absolute inset-[64px] rounded-full"
               style={{
-                borderColor: dialTheme.coreBorder,
                 backgroundColor: dialTheme.coreBackground,
-                boxShadow: `0 4px 10px ${dialTheme.coreShadow}`,
+                boxShadow: `0 2px 8px ${dialTheme.coreShadow}`,
               }}
               aria-hidden="true"
             />
@@ -129,7 +152,7 @@ export const TimerDial = ({
 
             <div className="absolute inset-0 flex flex-col items-center justify-center">
               <p
-                className="m-0 text-[clamp(33px,8.6vw,50px)] leading-none tracking-[0.04em] text-tomato-ink-strong tabular-nums"
+                className="m-0 text-[clamp(31px,7.8vw,44px)] leading-none tracking-[0.02em] text-tomato-ink-strong tabular-nums"
                 aria-live="polite"
               >
                 {formatTime(remainingSeconds)}

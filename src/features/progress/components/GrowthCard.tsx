@@ -1,5 +1,6 @@
 "use client";
 
+import { signOut } from "next-auth/react";
 import { GrowthCardAuthenticatedView } from "./GrowthCardAuthenticatedView";
 import { GrowthCardGuestView } from "./GrowthCardGuestView";
 import type { AuthStatus } from "@/src/types/auth";
@@ -19,9 +20,6 @@ const numberFormatter = new Intl.NumberFormat("ko-KR");
 const formatCount = (value: number) => `${numberFormatter.format(value)}회`;
 const formatMinutes = (value: number) => `${numberFormatter.format(value)}분`;
 
-const actionButtonClass =
-  "cursor-pointer rounded-2xl border px-4 py-3 text-sm font-semibold leading-none transition-[transform,box-shadow,background] duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-[1px] active:translate-y-0";
-
 export const GrowthCard = ({
   sessionStatus,
   progress,
@@ -34,20 +32,31 @@ export const GrowthCard = ({
   const previewCharacterImageUrl = guestCharacterImageUrl ?? "/LOGO.png";
 
   return (
-    <section className="rounded-[22px] border border-tomato-border-soft bg-[var(--color-surface-quiet)] p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.8)]">
+    <section className="rounded-[14px] bg-white/62 p-3">
       <div className="flex flex-wrap items-start justify-between gap-2.5">
         <div className="space-y-1">
-          <p className="m-0 text-[11px] font-semibold tracking-[0.04em] text-tomato-meta">
-            CHARACTER GROWTH
+          <p className="m-0 text-[11px] font-semibold tracking-[0.02em] text-tomato-meta">
+            성장 추적
           </p>
           <h2 className="m-0 text-[17px] font-semibold text-tomato-ink-strong">
             캐릭터 성장
           </h2>
         </div>
-        {isAuthenticated && userName ? (
-          <p className="m-0 text-right text-[12px] leading-5 text-tomato-meta">
-            {userName}
-          </p>
+        {isAuthenticated ? (
+          <div className="flex items-center gap-2">
+            {userName ? (
+              <p className="m-0 text-right text-[12px] leading-5 text-tomato-meta">
+                {userName}
+              </p>
+            ) : null}
+            <button
+              type="button"
+              className="cursor-pointer rounded-md px-2 py-1 text-[12px] font-semibold leading-none text-tomato-help transition-colors hover:bg-white/70 hover:text-tomato-ink-strong"
+              onClick={() => void signOut({ callbackUrl: "/" })}
+            >
+              로그아웃
+            </button>
+          </div>
         ) : null}
       </div>
 
@@ -56,7 +65,6 @@ export const GrowthCard = ({
           progress={progress}
           isLoading={isLoading}
           error={error}
-          actionButtonClass={actionButtonClass}
           formatCount={formatCount}
           formatMinutes={formatMinutes}
         />

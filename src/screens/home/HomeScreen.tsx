@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { useSession } from "next-auth/react";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
 import { getPhaseDurationSeconds } from "@/src/constants/timer";
 import { GrowthCard } from "@/src/features/progress/components/GrowthCard";
@@ -86,51 +86,51 @@ function HomeScreen({ guestCharacterImageUrl }: HomeScreenProps) {
     onFocusCompleted: handleFocusCompleted,
   });
 
+  const [isSettingsDialogOpen, setIsSettingsDialogOpen] = useState(false);
+
   return (
-    <main className="relative isolate flex min-h-dvh items-center justify-center px-4 py-4 sm:px-6 sm:py-5">
-      <section className="tomato-shell-enter relative w-full max-w-[980px] overflow-hidden rounded-[34px] border border-tomato-border/85 bg-tomato-card/88 p-[clamp(16px,3vw,28px)] shadow-[0_24px_52px_rgba(112,57,19,0.17),0_3px_12px_rgba(112,57,19,0.08)] backdrop-blur-md">
+    <main className="relative isolate flex min-h-dvh items-center justify-center px-4 py-3 sm:px-5 sm:py-4">
+      <section className="tomato-shell-enter relative h-fit w-full max-w-[1080px] overflow-hidden rounded-[24px] border border-tomato-border/80 bg-tomato-card p-[clamp(14px,2vw,22px)] shadow-[0_20px_36px_rgba(99,74,50,0.09),0_2px_6px_rgba(99,74,50,0.06)]">
         <div
-          className="pointer-events-none absolute -right-16 -top-20 h-52 w-52 rounded-full bg-tomato-accent/18 blur-3xl"
+          className="pointer-events-none absolute -right-16 -top-20 h-52 w-52 rounded-full bg-tomato-accent/10 blur-3xl"
           aria-hidden="true"
         />
         <div
-          className="pointer-events-none absolute -bottom-16 -left-10 h-40 w-40 rounded-full bg-[var(--color-leaf-accent)]/18 blur-3xl"
+          className="pointer-events-none absolute -bottom-16 -left-10 h-40 w-40 rounded-full bg-[var(--color-leaf-accent)]/8 blur-3xl"
           aria-hidden="true"
         />
 
-        <div className="relative grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(310px,360px)] lg:items-start lg:gap-6">
-          <div className="space-y-4">
-            <header className="flex items-start gap-3 text-left">
-              <Image
-                src="/LOGO.png"
-                alt="토마토 타이머 로고"
-                width={56}
-                height={56}
-                className="tomato-logo h-14 w-14 shrink-0 rounded-[12px] border border-tomato-border-soft/75 bg-white/72 object-cover p-[3px] shadow-[0_5px_14px_rgba(112,57,19,0.1)]"
-              />
-              <div className="min-w-0 space-y-1">
-                <p className="m-0 text-[11px] font-semibold tracking-[0.04em] text-tomato-meta">
-                  SOFT RETRO PIXEL
-                </p>
-                <h1 className="tomato-title m-0 font-display text-[clamp(34px,7vw,58px)] text-tomato-title">
-                  뽀모도로 타이머
-                </h1>
-                <p className="m-0 text-[13px] leading-5 text-tomato-help">
-                  집중 세션과 짧은 회복 리듬을 한 화면에서 관리해 보세요.
-                </p>
-              </div>
-            </header>
-
-            <TimerDial
-              phase={phase}
-              focusCountInSet={focusCountInSet}
-              settings={settings}
-              status={status}
-              remainingSeconds={remainingSeconds}
-            />
+        <header className="relative flex items-start gap-3.5 text-left">
+          <Image
+            src="/LOGO.png"
+            alt="토마토 타이머 로고"
+            width={50}
+            height={50}
+            className="tomato-logo h-[50px] w-[50px] shrink-0 rounded-[11px] border border-tomato-border-soft/70 bg-white/80 object-cover p-[2px]"
+          />
+          <div className="min-w-0 space-y-1">
+            <p className="m-0 text-[11px] font-semibold tracking-[0.02em] text-tomato-meta">
+              포커스 루틴 타이머
+            </p>
+            <h1 className="tomato-title m-0 font-display text-[clamp(30px,5.6vw,48px)] text-tomato-title">
+              뽀모도로 타이머
+            </h1>
+            <p className="m-0 text-[13px] leading-5 text-tomato-help">
+              한 화면에서 시작하고, 멈추고, 다시 집중하세요.
+            </p>
           </div>
+        </header>
 
-          <div className="space-y-3.5">
+        <div className="relative mt-4 grid gap-4 lg:grid-cols-[minmax(0,1.22fr)_minmax(300px,0.78fr)] lg:items-stretch lg:gap-5">
+          <TimerDial
+            phase={phase}
+            focusCountInSet={focusCountInSet}
+            settings={settings}
+            status={status}
+            remainingSeconds={remainingSeconds}
+          />
+
+          <section className="flex h-full flex-col gap-3.5 rounded-[18px] border border-tomato-border-soft/45 bg-white/72 p-3.5 sm:p-4">
             <TimerControls
               status={status}
               pipSupported={Boolean(pipSupported)}
@@ -138,6 +138,16 @@ function HomeScreen({ guestCharacterImageUrl }: HomeScreenProps) {
               onResetTimer={resetTimer}
               onOpenPipWindow={handleOpenPipWindow}
             />
+
+            <button
+              type="button"
+              className="cursor-pointer rounded-xl border border-tomato-border-soft bg-white/70 px-4 py-3 text-sm font-semibold text-tomato-ink-strong transition-[transform,box-shadow,background-color,border-color] duration-180 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-[1px] hover:border-tomato-border hover:bg-white/90 active:translate-y-0"
+              onClick={() => {
+                setIsSettingsDialogOpen(true);
+              }}
+            >
+              세트 설정
+            </button>
 
             <GrowthCard
               sessionStatus={sessionStatus}
@@ -149,16 +159,17 @@ function HomeScreen({ guestCharacterImageUrl }: HomeScreenProps) {
             />
 
             <TimerSettingsPanel
+              open={isSettingsDialogOpen}
+              onOpenChange={setIsSettingsDialogOpen}
               settings={settings}
               disabled={status !== "idle"}
-              onChangeSettings={handleSettingsChange}
+              onSave={handleSettingsChange}
             />
 
-            <div className="space-y-1.5">
+            <div className="space-y-1">
               {pipSupported === false && (
                 <p className="mb-0 text-[13px] leading-5 text-tomato-help">
-                  현재 브라우저에서는 Document PiP를 지원하지 않아 메인 타이머만
-                  사용할 수 있습니다.
+                  현재 브라우저에서는 작은 PiP 창을 지원하지 않습니다.
                 </p>
               )}
 
@@ -168,7 +179,7 @@ function HomeScreen({ guestCharacterImageUrl }: HomeScreenProps) {
                 </p>
               )}
             </div>
-          </div>
+          </section>
         </div>
       </section>
     </main>

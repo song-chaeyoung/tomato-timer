@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=Noto+Sans+KR:wght@500;700&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
@@ -7,38 +7,38 @@
 
 @theme {
   --font-sans:
-    'Noto Sans KR',
+    'IBM Plex Sans KR',
     'Pretendard',
     'Apple SD Gothic Neo',
     'Malgun Gothic',
     'Segoe UI',
     sans-serif;
   --font-display:
-    'Jua',
     'Noto Sans KR',
+    'IBM Plex Sans KR',
     'Pretendard',
     'Apple SD Gothic Neo',
     'Malgun Gothic',
     sans-serif;
 
-  --color-tomato-page: oklch(97.4% 0.024 74);
-  --color-tomato-ink: oklch(29% 0.04 34);
-  --color-tomato-ink-strong: oklch(23% 0.047 31);
-  --color-tomato-title: oklch(26% 0.056 34);
-  --color-tomato-subtle: oklch(43% 0.048 41);
-  --color-tomato-meta: oklch(45% 0.04 42);
-  --color-tomato-help: oklch(47% 0.038 44);
-  --color-tomato-error: oklch(56% 0.165 30);
+  --color-tomato-page: oklch(97.6% 0.01 78);
+  --color-tomato-ink: oklch(30% 0.026 44);
+  --color-tomato-ink-strong: oklch(23% 0.03 40);
+  --color-tomato-title: oklch(25% 0.032 39);
+  --color-tomato-subtle: oklch(39% 0.024 46);
+  --color-tomato-meta: oklch(35% 0.024 45);
+  --color-tomato-help: oklch(42% 0.02 49);
+  --color-tomato-error: oklch(56% 0.14 30);
 
-  --color-tomato-card: oklch(99.1% 0.015 70);
-  --color-tomato-card-strong: oklch(98.4% 0.019 66);
-  --color-tomato-border: oklch(84% 0.074 57);
-  --color-tomato-border-soft: oklch(90% 0.047 60);
-  --color-tomato-accent: oklch(63% 0.182 40);
-  --color-leaf-accent: oklch(65% 0.126 145);
+  --color-tomato-card: oklch(99.2% 0.007 80 / 94%);
+  --color-tomato-card-strong: oklch(98.7% 0.009 78);
+  --color-tomato-border: oklch(84% 0.032 67);
+  --color-tomato-border-soft: oklch(89% 0.021 72);
+  --color-tomato-accent: oklch(57% 0.122 35);
+  --color-leaf-accent: oklch(58% 0.068 154);
 
-  --color-surface-quiet: oklch(99% 0.012 67 / 75%);
-  --color-surface-elevated: oklch(99% 0.018 64 / 92%);
+  --color-surface-quiet: oklch(98.4% 0.011 76 / 98%);
+  --color-surface-elevated: oklch(99.1% 0.01 73 / 98%);
 
   --color-status-idle-border: oklch(89% 0.046 60);
   --color-status-idle-bg: oklch(99% 0.012 66 / 88%);
@@ -92,12 +92,12 @@
   --color-phase-long-core-bg: oklch(99% 0.01 46);
   --color-phase-long-core-shadow: rgba(110, 66, 37, 0.12);
 
-  --color-tomato-primary-start: oklch(71% 0.166 43);
-  --color-tomato-primary-end: oklch(62% 0.186 35);
-  --color-tomato-secondary-start: oklch(98% 0.021 66);
-  --color-tomato-secondary-end: oklch(95% 0.026 58);
-  --color-tomato-tertiary-start: oklch(97% 0.015 66);
-  --color-tomato-tertiary-end: oklch(94% 0.02 58);
+  --color-tomato-primary-start: oklch(58% 0.122 35);
+  --color-tomato-primary-end: oklch(53% 0.112 33);
+  --color-tomato-secondary-start: oklch(99% 0.008 80);
+  --color-tomato-secondary-end: oklch(97.2% 0.012 72);
+  --color-tomato-tertiary-start: oklch(98.7% 0.006 84);
+  --color-tomato-tertiary-end: oklch(96.7% 0.01 76);
   --color-tomato-ghost: oklch(39% 0.049 36);
 }
 
@@ -186,10 +186,9 @@ body {
   min-width: 320px;
   min-height: 100vh;
   background:
-    radial-gradient(1100px 620px at 0% 0%, oklch(99% 0.04 92 / 76%), transparent 70%),
-    radial-gradient(900px 520px at 100% 0%, oklch(94% 0.075 64 / 62%), transparent 72%),
-    radial-gradient(700px 560px at 120% 100%, oklch(94% 0.085 38 / 48%), transparent 70%),
-    linear-gradient(164deg, oklch(98% 0.02 76), oklch(96% 0.03 72) 48%, oklch(95% 0.03 62));
+    radial-gradient(1000px 600px at 0% -10%, oklch(98.8% 0.015 87 / 74%), transparent 72%),
+    radial-gradient(900px 540px at 110% 100%, oklch(95.8% 0.024 61 / 42%), transparent 72%),
+    linear-gradient(172deg, oklch(98.6% 0.009 84), oklch(96.9% 0.012 74) 56%, oklch(96.2% 0.013 66));
 }
 
 body::before {
@@ -198,11 +197,11 @@ body::before {
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  opacity: 0.16;
+  opacity: 0.07;
   background-image:
-    linear-gradient(to right, transparent 0 11px, oklch(80% 0.03 60 / 16%) 11px 12px),
-    linear-gradient(to bottom, transparent 0 11px, oklch(80% 0.03 60 / 13%) 11px 12px);
-  background-size: 12px 12px;
+    linear-gradient(to right, transparent 0 13px, oklch(78% 0.013 64 / 15%) 13px 14px),
+    linear-gradient(to bottom, transparent 0 13px, oklch(78% 0.013 64 / 12%) 13px 14px);
+  background-size: 14px 14px;
 }
 
 button {
@@ -211,12 +210,12 @@ button {
 
 button:focus-visible,
 input:focus-visible {
-  outline: 2px solid color-mix(in oklch, var(--color-tomato-accent) 82%, white);
+  outline: 2px solid color-mix(in oklch, var(--color-tomato-accent) 88%, white);
   outline-offset: 2px;
 }
 
 .tomato-shell-enter {
-  animation: surface-in 420ms cubic-bezier(0.16, 1, 0.3, 1);
+  animation: surface-in 360ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .status-chip-shift {
@@ -224,25 +223,56 @@ input:focus-visible {
 }
 
 .tomato-logo {
-  transition: transform 220ms cubic-bezier(0.33, 1, 0.68, 1), filter 220ms ease;
+  transition: transform 180ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .tomato-logo:hover {
   transform: translateY(-0.5px);
-  filter: saturate(1.02);
 }
 
 .tomato-title {
-  line-height: 1.04;
-  letter-spacing: -0.012em;
-  font-weight: 400;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  font-weight: 700;
   word-break: keep-all;
   text-wrap: balance;
 }
 
+.character-stage-shell {
+  position: relative;
+  isolation: isolate;
+}
+
+.character-stage-shell::after {
+  content: "";
+  position: absolute;
+  inset: -28%;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 28% 24%, oklch(91% 0.06 58 / 28%), transparent 55%),
+    radial-gradient(circle at 72% 76%, oklch(86% 0.085 42 / 22%), transparent 58%);
+  opacity: 0.26;
+  transform: scale(0.94) translate3d(0, 6%, 0);
+  animation: character-aura-shift 3600ms cubic-bezier(0.25, 1, 0.5, 1) infinite;
+}
+
+.character-stage-shell > * {
+  position: relative;
+  z-index: 1;
+}
+
+.character-stage-image {
+  transform-origin: center bottom;
+  will-change: transform, opacity;
+  animation:
+    character-stage-enter 420ms cubic-bezier(0.22, 1, 0.36, 1) both,
+    character-stage-float 3200ms cubic-bezier(0.25, 1, 0.5, 1) 460ms infinite;
+}
+
 @keyframes surface-in {
   from {
-    transform: translateY(10px);
+    transform: translateY(6px);
     opacity: 0;
   }
   to {
@@ -262,9 +292,50 @@ input:focus-visible {
   }
 }
 
+@keyframes character-stage-enter {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 10px, 0) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes character-stage-float {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+  }
+  25% {
+    transform: translate3d(0, -2px, 0) rotate(-0.35deg) scale(1.01);
+  }
+  50% {
+    transform: translate3d(0, -4px, 0) rotate(0.25deg) scale(1.015);
+  }
+  75% {
+    transform: translate3d(0, -1px, 0) rotate(-0.2deg) scale(1.008);
+  }
+}
+
+@keyframes character-aura-shift {
+  0%,
+  100% {
+    opacity: 0.2;
+    transform: scale(0.94) translate3d(0, 6%, 0);
+  }
+  50% {
+    opacity: 0.34;
+    transform: scale(1.02) translate3d(0, -4%, 0);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .tomato-shell-enter,
-  .status-chip-shift {
+  .status-chip-shift,
+  .character-stage-shell::after,
+  .character-stage-image {
     animation: none;
   }
 
@@ -275,6 +346,11 @@ input:focus-visible {
   .tomato-logo:hover {
     transform: none;
     filter: none;
+  }
+
+  .character-stage-shell::after {
+    transform: none;
+    opacity: 0.2;
   }
 }
 

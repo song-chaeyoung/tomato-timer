@@ -26,31 +26,22 @@ export const GrowthCardGuestView = ({
         <DialogTrigger asChild>
           <button
             type="button"
-            className="relative flex w-full items-center gap-3 overflow-hidden rounded-[24px] border border-tomato-border-soft/80 bg-[linear-gradient(160deg,rgba(255,247,237,0.95),rgba(250,236,219,0.92))] px-4 py-4 text-left shadow-[inset_0_1px_0_rgba(255,255,255,0.85)] transition-[transform,box-shadow,border-color] duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-[1px] hover:border-tomato-border focus-visible:outline-none"
+            className="relative flex w-full items-center gap-3 overflow-hidden rounded-[14px] bg-tomato-secondary-start/88 px-4 py-4 text-left transition-[transform,box-shadow] duration-180 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-[1px] focus-visible:outline-none"
           >
-            <div
-              className="pointer-events-none absolute -right-8 -top-10 h-28 w-28 rounded-full bg-tomato-accent/16 blur-3xl"
-              aria-hidden="true"
-            />
-            <div
-              className="pointer-events-none absolute -bottom-10 -left-8 h-24 w-24 rounded-full bg-[var(--color-leaf-accent)]/14 blur-3xl"
-              aria-hidden="true"
-            />
-
-            <div className="relative grid h-[108px] w-[108px] shrink-0 place-items-center rounded-[22px] border border-white/75 bg-white/58 p-3">
+            <div className="character-stage-shell relative grid h-[108px] w-[108px] shrink-0 place-items-center rounded-[12px] bg-white/90 p-3">
               <Image
                 src={previewCharacterImageUrl}
                 alt="기본 캐릭터 미리보기"
                 width={112}
                 height={112}
-                className="h-auto w-full max-w-[96px] object-contain drop-shadow-[0_12px_18px_rgba(94,54,24,0.14)]"
+                className="character-stage-image h-auto w-full max-w-[96px] object-contain drop-shadow-[0_12px_18px_rgba(94,54,24,0.14)]"
                 priority
               />
             </div>
 
             <div className="relative min-w-0 space-y-2">
-              <p className="m-0 text-[11px] font-semibold tracking-[0.08em] text-tomato-meta">
-                STAGE PREVIEW
+              <p className="m-0 text-[11px] font-semibold tracking-[0.02em] text-tomato-meta">
+                미리보기
               </p>
               <p className="m-0 text-[16px] font-semibold text-tomato-ink-strong">
                 기본 캐릭터부터 시작
@@ -63,17 +54,8 @@ export const GrowthCardGuestView = ({
         </DialogTrigger>
       </div>
 
-      <DialogContent className="max-w-[372px] overflow-hidden rounded-[28px] border border-tomato-border/85 bg-[linear-gradient(180deg,rgba(255,250,242,0.98),rgba(253,246,238,0.98))] p-0 text-tomato-ink shadow-[0_24px_52px_rgba(112,57,19,0.17),0_3px_12px_rgba(112,57,19,0.08)]">
+      <DialogContent className="max-w-[372px] overflow-hidden rounded-[18px] border border-tomato-border/70 bg-tomato-card p-0 text-tomato-ink shadow-[0_20px_34px_rgba(100,74,54,0.14)]">
         <div className="relative overflow-hidden px-5 pb-4 pt-5">
-          <div
-            className="pointer-events-none absolute -right-10 -top-12 h-32 w-32 rounded-full bg-tomato-accent/14 blur-3xl"
-            aria-hidden="true"
-          />
-          <div
-            className="pointer-events-none absolute -bottom-10 -left-8 h-28 w-28 rounded-full bg-[var(--color-leaf-accent)]/10 blur-3xl"
-            aria-hidden="true"
-          />
-
           <div className="relative space-y-4">
             <DialogHeader className="space-y-2">
               <DialogTitle className="text-[18px] font-semibold text-tomato-ink-strong">
@@ -85,18 +67,18 @@ export const GrowthCardGuestView = ({
               </DialogDescription>
             </DialogHeader>
 
-            <div className="grid min-h-[156px] place-items-center rounded-[24px] border border-white/75 bg-white/58 p-4">
+            <div className="character-stage-shell grid min-h-[156px] place-items-center rounded-[12px] bg-white/90 p-4">
               <Image
                 src={previewCharacterImageUrl}
                 alt="기본 캐릭터"
                 width={148}
                 height={148}
-                className="h-auto w-full max-w-[148px] object-contain drop-shadow-[0_16px_24px_rgba(94,54,24,0.16)]"
+                className="character-stage-image h-auto w-full max-w-[148px] object-contain drop-shadow-[0_16px_24px_rgba(94,54,24,0.16)]"
                 priority
               />
             </div>
 
-            <div className="rounded-[18px] border border-tomato-border-soft/80 bg-white/62 px-4 py-3">
+            <div className="rounded-[12px] bg-white/88 px-4 py-3">
               <p className="m-0 text-[13px] leading-6 text-tomato-ink-strong">
                 로그인 후에는 완료 횟수와 누적 집중 시간이 저장되고, 다음 단계
                 조건도 바로 확인할 수 있습니다.
@@ -105,17 +87,17 @@ export const GrowthCardGuestView = ({
           </div>
         </div>
 
-        <div className="flex items-center justify-end gap-2 border-t border-tomato-border-soft/70 bg-white/52 px-5 py-4">
+        <div className="flex items-center justify-end gap-2 border-t border-tomato-border-soft/45 bg-white/70 px-5 py-4">
           <DialogClose asChild>
             <Button
               variant="outline"
-              className="h-11 min-w-[88px] rounded-2xl border-tomato-border-soft bg-white/82 px-4 text-tomato-ink-strong hover:bg-white"
+              className="h-11 min-w-[88px] rounded-xl border-tomato-border-soft bg-white px-4 text-tomato-ink-strong hover:bg-tomato-secondary-start"
             >
               나중에
             </Button>
           </DialogClose>
           <Button
-            className="h-11 min-w-[164px] rounded-2xl border-transparent bg-gradient-to-b from-tomato-primary-start to-tomato-primary-end px-5 text-white shadow-[0_10px_20px_rgba(144,61,18,0.26)] hover:brightness-[1.02]"
+            className="h-11 min-w-[164px] rounded-xl border-transparent bg-[var(--color-tomato-accent)] px-5 text-white shadow-[0_8px_16px_rgba(126,65,31,0.22)] hover:brightness-95"
             onClick={() => void signIn("google", { callbackUrl: "/" })}
           >
             Google로 로그인
