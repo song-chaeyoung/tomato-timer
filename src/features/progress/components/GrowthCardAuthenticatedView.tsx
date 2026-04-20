@@ -26,9 +26,9 @@ export const GrowthCardAuthenticatedView = ({
 
   return (
     <div className="mt-3 space-y-2.5">
-      <div className="relative overflow-hidden rounded-[14px] bg-tomato-secondary-start/88 px-4 py-4">
+      <div className="relative overflow-hidden rounded-[14px] border border-tomato-border-soft/55 bg-[var(--color-tomato-panel-elevated)] px-4 py-4">
         <div className="relative space-y-3.5">
-          <div className="character-stage-shell grid min-h-[148px] place-items-center rounded-[12px] bg-white/90 p-3">
+          <div className="character-stage-shell grid min-h-[148px] place-items-center rounded-[12px] bg-[var(--color-character-stage-surface)] p-3">
             {progress?.stage.characterImageUrl ? (
               <Image
                 key={`stage-${progress.stage.level}`}
@@ -40,7 +40,7 @@ export const GrowthCardAuthenticatedView = ({
                 priority
               />
             ) : (
-              <div className="grid h-[132px] w-full max-w-[152px] place-items-center rounded-[12px] bg-white/88">
+              <div className="grid h-[132px] w-full max-w-[152px] place-items-center rounded-[12px] bg-[var(--color-character-stage-surface)]">
                 <p className="m-0 text-[14px] font-semibold text-tomato-help">
                   캐릭터 이미지 준비 중
                 </p>
@@ -58,7 +58,7 @@ export const GrowthCardAuthenticatedView = ({
               </p>
             </div>
             {isLoading ? (
-              <span className="rounded-full bg-white/88 px-3 py-1 text-[12px] font-semibold text-tomato-meta">
+              <span className="rounded-full bg-[var(--color-tomato-button-soft)] px-3 py-1 text-[12px] font-semibold text-tomato-meta">
                 불러오는 중
               </span>
             ) : null}
@@ -66,7 +66,7 @@ export const GrowthCardAuthenticatedView = ({
         </div>
       </div>
 
-      <div className="rounded-[12px] bg-white/88 px-3.5 py-3">
+      <div className="rounded-[12px] border border-tomato-border-soft/50 bg-[var(--color-tomato-panel-soft)] px-3.5 py-3">
         <p className="m-0 text-[11px] font-semibold tracking-[0.02em] text-tomato-meta">
           집중 요약
         </p>
@@ -75,7 +75,7 @@ export const GrowthCardAuthenticatedView = ({
         </p>
       </div>
 
-      <details className="rounded-[12px] bg-white/88 px-3.5 py-3">
+      <details className="rounded-[12px] border border-tomato-border-soft/50 bg-[var(--color-tomato-panel-soft)] px-3.5 py-3">
         <summary className="cursor-pointer list-none text-[11px] font-semibold tracking-[0.02em] text-tomato-meta [&::-webkit-details-marker]:hidden">
           다음 단계 보기
         </summary>

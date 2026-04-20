@@ -36,7 +36,7 @@ export const mountPipUi = (pipWindow: Window, channelName: string) => {
   const style = doc.createElement("style");
   style.textContent = `
     :root {
-      color-scheme: light;
+      color-scheme: light dark;
       font-family: var(--font-sans, 'Pretendard', 'Noto Sans KR', 'Segoe UI', sans-serif);
       background: var(--color-tomato-page, #fff7ed);
       color: var(--color-tomato-ink, #281507);
@@ -60,16 +60,16 @@ export const mountPipUi = (pipWindow: Window, channelName: string) => {
       min-width: 0;
       overscroll-behavior: none;
       background:
-        radial-gradient(360px 220px at 0% 0%, color-mix(in oklch, var(--color-tomato-card, #fffaf2) 82%, white), transparent 72%),
-        radial-gradient(280px 200px at 100% 0%, color-mix(in oklch, var(--color-tomato-accent, #f17a4a) 20%, white), transparent 76%),
-        linear-gradient(164deg, color-mix(in oklch, var(--color-tomato-page, #fff7ed) 88%, white), var(--color-tomato-page, #fff7ed));
+        radial-gradient(360px 220px at 0% 0%, color-mix(in oklch, var(--color-tomato-card, #fffaf2) 86%, var(--color-tomato-page, #fff7ed)), transparent 72%),
+        radial-gradient(280px 200px at 100% 0%, color-mix(in oklch, var(--color-tomato-accent, #f17a4a) 20%, var(--color-tomato-page, #fff7ed)), transparent 76%),
+        linear-gradient(164deg, color-mix(in oklch, var(--color-tomato-page, #fff7ed) 90%, var(--color-tomato-card, #fffaf2)), var(--color-tomato-page, #fff7ed));
     }
     .pip-shell {
       width: 100%;
       height: 100%;
       border-radius: 12px;
       border: none;
-      background: color-mix(in oklch, var(--color-tomato-card, #fffaf2) 92%, white);
+      background: color-mix(in oklch, var(--color-tomato-card, #fffaf2) 92%, var(--color-tomato-page, #fff7ed));
       box-shadow: 0 8px 16px rgba(99, 47, 14, 0.12);
       padding: 4px;
     }
@@ -131,7 +131,7 @@ export const mountPipUi = (pipWindow: Window, channelName: string) => {
       position: absolute;
       inset: 7px;
       border-radius: 999px;
-      box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.82);
+      box-shadow: inset 0 1px 1px var(--color-dial-gloss, rgba(255, 255, 255, 0.72));
       transition: background 260ms linear;
     }
     .pip-inner {

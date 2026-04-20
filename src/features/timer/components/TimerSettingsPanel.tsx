@@ -88,7 +88,7 @@ const TimerSettingsDialogBody = ({
   }
 
   return (
-    <DialogContent className="max-w-[460px] rounded-[18px] border border-tomato-border-soft/60 bg-white/95 p-0">
+    <DialogContent className="pixel-corners max-w-[460px] rounded-[18px] border border-tomato-border-soft/60 bg-[var(--color-tomato-panel-elevated)] p-0">
       <DialogHeader className="gap-1 px-5 pt-5">
         <DialogTitle className="font-semibold tracking-[0.01em] text-tomato-ink-strong">세트 설정</DialogTitle>
         <DialogDescription className="text-[12px] leading-5 text-tomato-meta">
@@ -135,7 +135,7 @@ const TimerSettingsDialogBody = ({
         </div>
       </div>
 
-      <DialogFooter className="-mx-0 -mb-0 rounded-b-[18px] border-t border-tomato-border-soft/60 bg-white/82 px-5 py-3">
+      <DialogFooter className="-mx-0 -mb-0 rounded-b-[18px] border-t border-tomato-border-soft/60 bg-[var(--color-tomato-panel-soft)] px-5 py-3">
         <Button variant="outline" onClick={() => onOpenChange(false)}>
           취소
         </Button>
