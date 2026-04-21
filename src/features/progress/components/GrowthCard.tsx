@@ -32,7 +32,7 @@ export const GrowthCard = ({
   const previewCharacterImageUrl = guestCharacterImageUrl ?? "/LOGO.png";
 
   return (
-    <section className="rounded-[14px] bg-white/62 p-3">
+    <section className="pixel-corners rounded-[14px] border border-tomato-border-soft/55 bg-[var(--color-tomato-panel-soft)] p-3">
       <div className="flex flex-wrap items-start justify-between gap-2.5">
         <div className="space-y-1">
           <p className="m-0 text-[11px] font-semibold tracking-[0.02em] text-tomato-meta">
@@ -51,7 +51,7 @@ export const GrowthCard = ({
             ) : null}
             <button
               type="button"
-              className="cursor-pointer rounded-md px-2 py-1 text-[12px] font-semibold leading-none text-tomato-help transition-colors hover:bg-white/70 hover:text-tomato-ink-strong"
+              className="cursor-pointer rounded-md px-2 py-1 text-[12px] font-semibold leading-none text-tomato-help transition-colors hover:bg-[var(--color-tomato-button-soft)] hover:text-tomato-ink-strong"
               onClick={() => void signOut({ callbackUrl: "/" })}
             >
               로그아웃

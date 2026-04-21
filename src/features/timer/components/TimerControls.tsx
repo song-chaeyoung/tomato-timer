@@ -22,7 +22,7 @@ export const TimerControls = ({
     <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
       <button
         type="button"
-        className={`${buttonBaseClass} col-span-2 border-transparent bg-[var(--color-tomato-accent)] text-white shadow-[0_8px_18px_rgba(126,65,31,0.22)] hover:brightness-95 sm:col-span-1`}
+        className={`${buttonBaseClass} col-span-2 border-transparent bg-[var(--color-tomato-accent)] text-white shadow-[var(--shadow-cta)] hover:brightness-95 sm:col-span-1`}
         onClick={onRunPrimaryAction}
       >
         {status === 'running' ? '일시정지' : status === 'paused' ? '재개' : '시작'}
@@ -30,7 +30,7 @@ export const TimerControls = ({
 
       <button
         type="button"
-        className={`${buttonBaseClass} border-tomato-border bg-tomato-secondary-start text-tomato-ink-strong hover:border-tomato-border/90 hover:bg-tomato-secondary-end`}
+        className={`${buttonBaseClass} border-tomato-border bg-[var(--color-tomato-button-soft)] text-tomato-ink-strong hover:border-tomato-border/90 hover:bg-[var(--color-tomato-panel-elevated)]`}
         onClick={onResetTimer}
       >
         리셋
@@ -38,7 +38,7 @@ export const TimerControls = ({
 
       <button
         type="button"
-        className={`${buttonBaseClass} border-tomato-border-soft bg-tomato-tertiary-start text-tomato-ghost hover:border-tomato-border hover:bg-tomato-tertiary-end disabled:cursor-not-allowed disabled:opacity-45 disabled:hover:translate-y-0`}
+        className={`${buttonBaseClass} border-tomato-border-soft bg-[var(--color-tomato-panel-soft)] text-tomato-ghost hover:border-tomato-border hover:bg-[var(--color-tomato-panel-elevated)] disabled:cursor-not-allowed disabled:opacity-45 disabled:hover:translate-y-0`}
         onClick={onOpenPipWindow}
         disabled={!pipSupported}
       >

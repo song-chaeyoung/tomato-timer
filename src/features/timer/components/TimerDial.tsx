@@ -69,13 +69,14 @@ export const TimerDial = ({
       ${dialTheme.empty} ${progressPercent * 3.6}deg,
       ${dialTheme.empty} 360deg
     )`,
+    boxShadow: "inset 0 1px 1px var(--color-dial-gloss)",
   };
 
   const statusHint = STATUS_HINT_COPY[status];
   const statusChip = STATUS_CHIP_THEME[status];
 
   return (
-    <section className="w-full rounded-[18px] bg-[var(--color-surface-quiet)] p-[clamp(12px,2vw,18px)]">
+    <section className="pixel-corners w-full rounded-[18px] border border-tomato-border-soft/55 bg-[var(--color-surface-quiet)] p-[clamp(12px,2vw,18px)]">
       <div className="flex flex-wrap items-center justify-between gap-2.5">
         <p
           key={status}
@@ -96,7 +97,7 @@ export const TimerDial = ({
 
       <div className="mt-3 flex flex-col items-center gap-2.5">
         <div
-          className="relative aspect-square w-[min(100%,490px)] max-w-full rounded-[24px] p-3"
+          className="pixel-ring-surface relative aspect-square w-[min(100%,490px)] max-w-full rounded-[24px] p-3"
           style={{
             backgroundColor: dialTheme.frameBackground,
           }}
@@ -114,7 +115,7 @@ export const TimerDial = ({
             }}
           >
             <div
-              className="absolute inset-[16px] rounded-full shadow-[inset_0_1px_1px_rgba(255,255,255,0.72)] transition-[background] duration-[260ms] ease-linear"
+              className="absolute inset-[16px] rounded-full transition-[background] duration-[260ms] ease-linear"
               style={clockRingStyle}
               aria-hidden="true"
             />

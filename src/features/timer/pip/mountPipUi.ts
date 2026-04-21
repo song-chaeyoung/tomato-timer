@@ -1,22 +1,58 @@
 import { PHASE_LABEL } from "../../../constants/timer";
 import { MODE_DIAL_THEME, STATUS_COPY, STATUS_TONE } from "../constants/ui";
 
+const THEME_VARIABLE_PREFIXES = ["--font-", "--color-", "--shadow-"] as const;
+const THEME_ATTRIBUTE_NAMES = ["data-theme", "data-theme-preference"] as const;
+
 export const mountPipUi = (pipWindow: Window, channelName: string) => {
   const doc = pipWindow.document;
   doc.title = "토마토 PiP";
 
-  const sourceStyles = window.getComputedStyle(document.documentElement);
-  for (let index = 0; index < sourceStyles.length; index += 1) {
-    const name = sourceStyles[index];
-    if (!name.startsWith("--font-") && !name.startsWith("--color-")) {
-      continue;
+  const hostRoot = document.documentElement;
+  const pipRoot = doc.documentElement;
+
+  const syncThemeTokens = () => {
+    const sourceStyles = window.getComputedStyle(hostRoot);
+    for (let index = 0; index < sourceStyles.length; index += 1) {
+      const name = sourceStyles[index];
+      if (!THEME_VARIABLE_PREFIXES.some((prefix) => name.startsWith(prefix))) {
+        continue;
+      }
+      const value = sourceStyles.getPropertyValue(name).trim();
+      if (!value) {
+        continue;
+      }
+      pipRoot.style.setProperty(name, value);
     }
-    const value = sourceStyles.getPropertyValue(name).trim();
-    if (!value) {
-      continue;
+
+    pipRoot.classList.toggle("dark", hostRoot.classList.contains("dark"));
+
+    for (const attributeName of THEME_ATTRIBUTE_NAMES) {
+      const attributeValue = hostRoot.getAttribute(attributeName);
+      if (attributeValue === null) {
+        pipRoot.removeAttribute(attributeName);
+        continue;
+      }
+      pipRoot.setAttribute(attributeName, attributeValue);
     }
-    doc.documentElement.style.setProperty(name, value);
-  }
+  };
+
+  syncThemeTokens();
+
+  const themeObserver = new MutationObserver(() => {
+    syncThemeTokens();
+  });
+  themeObserver.observe(hostRoot, {
+    attributes: true,
+    attributeFilter: ["class", ...THEME_ATTRIBUTE_NAMES],
+  });
+  pipWindow.addEventListener(
+    "pagehide",
+    () => {
+      themeObserver.disconnect();
+    },
+    { once: true },
+  );
 
   doc.head.innerHTML = "";
   doc.body.innerHTML = `
@@ -36,7 +72,7 @@ export const mountPipUi = (pipWindow: Window, channelName: string) => {
   const style = doc.createElement("style");
   style.textContent = `
     :root {
-      color-scheme: light;
+      color-scheme: light dark;
       font-family: var(--font-sans, 'Pretendard', 'Noto Sans KR', 'Segoe UI', sans-serif);
       background: var(--color-tomato-page, #fff7ed);
       color: var(--color-tomato-ink, #281507);
@@ -60,16 +96,16 @@ export const mountPipUi = (pipWindow: Window, channelName: string) => {
       min-width: 0;
       overscroll-behavior: none;
       background:
-        radial-gradient(360px 220px at 0% 0%, color-mix(in oklch, var(--color-tomato-card, #fffaf2) 82%, white), transparent 72%),
-        radial-gradient(280px 200px at 100% 0%, color-mix(in oklch, var(--color-tomato-accent, #f17a4a) 20%, white), transparent 76%),
-        linear-gradient(164deg, color-mix(in oklch, var(--color-tomato-page, #fff7ed) 88%, white), var(--color-tomato-page, #fff7ed));
+        radial-gradient(360px 220px at 0% 0%, color-mix(in oklch, var(--color-tomato-card, #fffaf2) 86%, var(--color-tomato-page, #fff7ed)), transparent 72%),
+        radial-gradient(280px 200px at 100% 0%, color-mix(in oklch, var(--color-tomato-accent, #f17a4a) 20%, var(--color-tomato-page, #fff7ed)), transparent 76%),
+        linear-gradient(164deg, color-mix(in oklch, var(--color-tomato-page, #fff7ed) 90%, var(--color-tomato-card, #fffaf2)), var(--color-tomato-page, #fff7ed));
     }
     .pip-shell {
       width: 100%;
       height: 100%;
       border-radius: 12px;
       border: none;
-      background: color-mix(in oklch, var(--color-tomato-card, #fffaf2) 92%, white);
+      background: color-mix(in oklch, var(--color-tomato-card, #fffaf2) 92%, var(--color-tomato-page, #fff7ed));
       box-shadow: 0 8px 16px rgba(99, 47, 14, 0.12);
       padding: 4px;
     }
@@ -131,7 +167,7 @@ export const mountPipUi = (pipWindow: Window, channelName: string) => {
       position: absolute;
       inset: 7px;
       border-radius: 999px;
-      box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.82);
+      box-shadow: inset 0 1px 1px var(--color-dial-gloss, rgba(255, 255, 255, 0.72));
       transition: background 260ms linear;
     }
     .pip-inner {

@@ -26,9 +26,9 @@ export const GrowthCardGuestView = ({
         <DialogTrigger asChild>
           <button
             type="button"
-            className="relative flex w-full items-center gap-3 overflow-hidden rounded-[14px] bg-tomato-secondary-start/88 px-4 py-4 text-left transition-[transform,box-shadow] duration-180 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-[1px] focus-visible:outline-none"
+            className="relative flex w-full items-center gap-3 overflow-hidden rounded-[14px] border border-tomato-border-soft/55 bg-[var(--color-tomato-panel-elevated)] px-4 py-4 text-left transition-[transform,box-shadow] duration-180 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-[1px] focus-visible:outline-none"
           >
-            <div className="character-stage-shell relative grid h-[108px] w-[108px] shrink-0 place-items-center rounded-[12px] bg-white/90 p-3">
+            <div className="character-stage-shell relative grid h-[108px] w-[108px] shrink-0 place-items-center rounded-[12px] bg-[var(--color-character-stage-surface)] p-3">
               <Image
                 src={previewCharacterImageUrl}
                 alt="기본 캐릭터 미리보기"
@@ -54,7 +54,7 @@ export const GrowthCardGuestView = ({
         </DialogTrigger>
       </div>
 
-      <DialogContent className="max-w-[372px] overflow-hidden rounded-[18px] border border-tomato-border/70 bg-tomato-card p-0 text-tomato-ink shadow-[0_20px_34px_rgba(100,74,54,0.14)]">
+      <DialogContent className="max-w-[372px] overflow-hidden rounded-[18px] border border-tomato-border/70 bg-tomato-card p-0 text-tomato-ink shadow-[var(--shadow-shell)]">
         <div className="relative overflow-hidden px-5 pb-4 pt-5">
           <div className="relative space-y-4">
             <DialogHeader className="space-y-2">
@@ -67,7 +67,7 @@ export const GrowthCardGuestView = ({
               </DialogDescription>
             </DialogHeader>
 
-            <div className="character-stage-shell grid min-h-[156px] place-items-center rounded-[12px] bg-white/90 p-4">
+            <div className="character-stage-shell grid min-h-[156px] place-items-center rounded-[12px] bg-[var(--color-character-stage-surface)] p-4">
               <Image
                 src={previewCharacterImageUrl}
                 alt="기본 캐릭터"
@@ -78,7 +78,7 @@ export const GrowthCardGuestView = ({
               />
             </div>
 
-            <div className="rounded-[12px] bg-white/88 px-4 py-3">
+            <div className="rounded-[12px] border border-tomato-border-soft/45 bg-[var(--color-tomato-panel-soft)] px-4 py-3">
               <p className="m-0 text-[13px] leading-6 text-tomato-ink-strong">
                 로그인 후에는 완료 횟수와 누적 집중 시간이 저장되고, 다음 단계
                 조건도 바로 확인할 수 있습니다.
@@ -87,11 +87,11 @@ export const GrowthCardGuestView = ({
           </div>
         </div>
 
-        <div className="flex items-center justify-end gap-2 border-t border-tomato-border-soft/45 bg-white/70 px-5 py-4">
+        <div className="flex items-center justify-end gap-2 border-t border-tomato-border-soft/45 bg-[var(--color-tomato-panel-soft)] px-5 py-4">
           <DialogClose asChild>
             <Button
               variant="outline"
-              className="h-11 min-w-[88px] rounded-xl border-tomato-border-soft bg-white px-4 text-tomato-ink-strong hover:bg-tomato-secondary-start"
+              className="h-11 min-w-[88px] rounded-xl border-tomato-border-soft bg-[var(--color-tomato-button-soft)] px-4 text-tomato-ink-strong hover:bg-[var(--color-tomato-panel-elevated)]"
             >
               나중에
             </Button>

@@ -1,5 +1,11 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Script from "next/script";
+import {
+  COLOR_SCHEME_QUERY,
+  DEFAULT_THEME_PREFERENCE,
+  THEME_STORAGE_KEY,
+} from "@/src/features/theme/constants/theme";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -37,6 +43,28 @@ export const metadata: Metadata = {
   },
 };
 
+const themeInitScript = `
+(() => {
+  try {
+    const storageKey = ${JSON.stringify(THEME_STORAGE_KEY)};
+    const defaultTheme = ${JSON.stringify(DEFAULT_THEME_PREFERENCE)};
+    const savedTheme = localStorage.getItem(storageKey);
+    const validTheme =
+      savedTheme === "light" || savedTheme === "dark" || savedTheme === "system"
+        ? savedTheme
+        : defaultTheme;
+    const prefersDark = window.matchMedia(${JSON.stringify(COLOR_SCHEME_QUERY)}).matches;
+    const resolvedTheme = validTheme === "system" ? (prefersDark ? "dark" : "light") : validTheme;
+    const root = document.documentElement;
+    root.classList.toggle("dark", resolvedTheme === "dark");
+    root.dataset.theme = resolvedTheme;
+    root.dataset.themePreference = validTheme;
+  } catch (error) {
+    // no-op
+  }
+})();
+`;
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -45,8 +73,14 @@ export default function RootLayout({
   return (
     <html
       lang="ko"
+      suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
+      <head>
+        <Script id="theme-init-script" strategy="beforeInteractive">
+          {themeInitScript}
+        </Script>
+      </head>
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );
