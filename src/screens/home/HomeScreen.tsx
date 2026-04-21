@@ -1,8 +1,9 @@
 import Image from "next/image";
 import { useSession } from "next-auth/react";
-import { useCallback, useState } from "react";
+import { useCallback, useState, useSyncExternalStore } from "react";
 import { useShallow } from "zustand/react/shallow";
 import { getPhaseDurationSeconds } from "@/src/constants/timer";
+import { DEFAULT_THEME_PREFERENCE } from "@/src/features/theme/constants/theme";
 import { GrowthCard } from "@/src/features/progress/components/GrowthCard";
 import { useUserProgress } from "@/src/features/progress/hooks/useUserProgress";
 import { useThemePreference } from "@/src/features/theme/hooks/useThemePreference";
@@ -24,10 +25,22 @@ const THEME_OPTIONS: Array<{ value: ThemePreference; label: string }> = [
   { value: "system", label: "시스템" },
 ];
 
+const subscribeHydration = (onStoreChange: () => void) => {
+  void onStoreChange;
+  return () => undefined;
+};
+
 function HomeScreen({ guestCharacterImageUrl }: HomeScreenProps) {
   const { data: session, status: sessionStatus } = useSession();
   const themeController: ThemeController = useThemePreference();
   const { theme, resolvedTheme, setTheme } = themeController;
+  const isHydrated = useSyncExternalStore(
+    subscribeHydration,
+    () => true,
+    () => false,
+  );
+  const renderedTheme = isHydrated ? theme : DEFAULT_THEME_PREFERENCE;
+  const renderedResolvedTheme = isHydrated ? resolvedTheme : "light";
   const {
     phase,
     focusCountInSet,
@@ -146,7 +159,7 @@ function HomeScreen({ guestCharacterImageUrl }: HomeScreenProps) {
                 THEME
               </p>
               <p className="m-0 text-[11px] text-tomato-help">
-                현재 {resolvedTheme === "dark" ? "다크" : "라이트"}
+                현재 {renderedResolvedTheme === "dark" ? "다크" : "라이트"}
               </p>
             </div>
             <div
@@ -159,7 +172,7 @@ function HomeScreen({ guestCharacterImageUrl }: HomeScreenProps) {
                   key={option.value}
                   type="button"
                   aria-label={`${option.label} 테마로 전환`}
-                  aria-pressed={theme === option.value}
+                  aria-pressed={renderedTheme === option.value}
                   className="cursor-pointer border-r border-tomato-border-soft/60 px-2.5 py-1.5 text-[11px] font-semibold text-tomato-subtle transition-colors last:border-r-0 hover:bg-[var(--color-tomato-button-soft)] aria-pressed:bg-[var(--color-tomato-accent)] aria-pressed:text-white"
                   onClick={() => setTheme(option.value)}
                 >

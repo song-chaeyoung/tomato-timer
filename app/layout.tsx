@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Script from "next/script";
 import {
   COLOR_SCHEME_QUERY,
   DEFAULT_THEME_PREFERENCE,
@@ -76,10 +77,9 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <head>
-        <script
-          id="theme-init-script"
-          dangerouslySetInnerHTML={{ __html: themeInitScript }}
-        />
+        <Script id="theme-init-script" strategy="beforeInteractive">
+          {themeInitScript}
+        </Script>
       </head>
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
