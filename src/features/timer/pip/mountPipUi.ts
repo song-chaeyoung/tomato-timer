@@ -230,8 +230,8 @@ export const mountPipUi = (pipWindow: Window, channelName: string) => {
       const dialThemes = ${JSON.stringify(MODE_DIAL_THEME)};
       const statusCopyMap = ${JSON.stringify(STATUS_COPY)};
       const statusToneMap = ${JSON.stringify(STATUS_TONE)};
-      const statusSymbolMap = { idle: '■', running: '▶', paused: 'Ⅱ' };
       const controlActionLabelMap = { START: '시작', PAUSE: '일시정지', RESUME: '재개' };
+      const controlActionSymbolMap = { START: '▶', PAUSE: 'Ⅱ', RESUME: '▶' };
 
       let snapshot = null;
       let durations = null;
@@ -330,7 +330,7 @@ export const mountPipUi = (pipWindow: Window, channelName: string) => {
         if (statusElement) {
           const action = resolvePrimaryControlAction();
           const actionLabel = action ? controlActionLabelMap[action] : null;
-          statusElement.textContent = statusSymbolMap[snapshot.status] || statusSymbolMap.idle;
+          statusElement.textContent = action ? controlActionSymbolMap[action] : '▶';
           statusElement.title = actionLabel
             ? statusCopy.label + ' · 클릭하여 ' + actionLabel
             : statusCopy.label;
