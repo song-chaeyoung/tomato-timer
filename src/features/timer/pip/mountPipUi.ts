@@ -1,22 +1,58 @@
 import { PHASE_LABEL } from "../../../constants/timer";
 import { MODE_DIAL_THEME, STATUS_COPY, STATUS_TONE } from "../constants/ui";
 
+const THEME_VARIABLE_PREFIXES = ["--font-", "--color-", "--shadow-"] as const;
+const THEME_ATTRIBUTE_NAMES = ["data-theme", "data-theme-preference"] as const;
+
 export const mountPipUi = (pipWindow: Window, channelName: string) => {
   const doc = pipWindow.document;
   doc.title = "토마토 PiP";
 
-  const sourceStyles = window.getComputedStyle(document.documentElement);
-  for (let index = 0; index < sourceStyles.length; index += 1) {
-    const name = sourceStyles[index];
-    if (!name.startsWith("--font-") && !name.startsWith("--color-")) {
-      continue;
+  const hostRoot = document.documentElement;
+  const pipRoot = doc.documentElement;
+
+  const syncThemeTokens = () => {
+    const sourceStyles = window.getComputedStyle(hostRoot);
+    for (let index = 0; index < sourceStyles.length; index += 1) {
+      const name = sourceStyles[index];
+      if (!THEME_VARIABLE_PREFIXES.some((prefix) => name.startsWith(prefix))) {
+        continue;
+      }
+      const value = sourceStyles.getPropertyValue(name).trim();
+      if (!value) {
+        continue;
+      }
+      pipRoot.style.setProperty(name, value);
     }
-    const value = sourceStyles.getPropertyValue(name).trim();
-    if (!value) {
-      continue;
+
+    pipRoot.classList.toggle("dark", hostRoot.classList.contains("dark"));
+
+    for (const attributeName of THEME_ATTRIBUTE_NAMES) {
+      const attributeValue = hostRoot.getAttribute(attributeName);
+      if (attributeValue === null) {
+        pipRoot.removeAttribute(attributeName);
+        continue;
+      }
+      pipRoot.setAttribute(attributeName, attributeValue);
     }
-    doc.documentElement.style.setProperty(name, value);
-  }
+  };
+
+  syncThemeTokens();
+
+  const themeObserver = new MutationObserver(() => {
+    syncThemeTokens();
+  });
+  themeObserver.observe(hostRoot, {
+    attributes: true,
+    attributeFilter: ["class", ...THEME_ATTRIBUTE_NAMES],
+  });
+  pipWindow.addEventListener(
+    "pagehide",
+    () => {
+      themeObserver.disconnect();
+    },
+    { once: true },
+  );
 
   doc.head.innerHTML = "";
   doc.body.innerHTML = `

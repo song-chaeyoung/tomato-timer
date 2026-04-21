@@ -264,6 +264,10 @@ input:focus-visible {
   text-wrap: balance;
 }
 
+.tomato-shell-pixel {
+  position: relative;
+}
+
 .tomato-shell-pixel::before {
   content: "";
   position: absolute;
@@ -346,7 +350,7 @@ input:focus-visible {
   position: relative;
 }
 
-.pixel-corners-sm::before {
+.pixel-corners-sm::after {
   content: "";
   position: absolute;
   inset: 0;
